@@ -3,17 +3,23 @@ import express from 'express';
 const app = express();
 const PORT = 3000;
 
+app.use(express.json())
+
 app.get('/', (_req, res) => {
 	res.send('Привет! Это мой первый сервер на Express.');
 });
 
 // коллекция — работаем со списком целиком
-app.get('/books', (_req, res) => {
-	res.status(200).send('Список книг');
+app.get('/books', (req, res) => {
+	const status = req.query.status;
+	res
+		.status(200)
+		.send(`Список книг. Фильтр по статусу: ${status || 'нет фильтра'}`);
 });
 
-app.post('/books', (_req, res) => {
-	res.status(201).send('Книга создана');
+app.post('/books', (req, res) => {
+	const { title, author } = req.body;
+	res.status(201).send(`Книга создана: «${title}», автор — ${author}`);
 });
 
 // один элемент — работаем с конкретной книгой
@@ -22,7 +28,8 @@ app.get('/books/:id', (req, res) => {
 });
 
 app.put('/books/:id', (req, res) => {
-	res.status(200).send(`Книга с id=${req.params.id} обновлена`);
+	const { title, author } = req.body;
+	res.status(200).send(`Книга с id=${req.params.id} обновлена: «${title}», автор — ${author}`);
 });
 
 app.delete('/books/:id', (_req, res) => {
