@@ -1,0 +1,16 @@
+info:
+  name: Delete book
+  type: http
+  seq: 4
+
+http:
+  method: DELETE
+  url: http://localhost:3000/books/1
+  auth: inherit
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
+  forwardAuthorizationHeader: false
