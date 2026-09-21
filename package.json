@@ -5,6 +5,7 @@
 	"type": "module",
 	"scripts": {
 		"start": "node server.js",
+		"dev": "nodemon server.js",
 		"check": "biome check --write .",
 		"rewrite": "biome check --write --unsafe"
 	},
@@ -16,6 +17,7 @@
 		"express": "^5.2.1"
 	},
 	"devDependencies": {
-		"@biomejs/biome": "^2.5.13"
+		"@biomejs/biome": "^2.5.13",
+		"nodemon": "^3.1.14"
 	}
 }

@@ -3,10 +3,24 @@ import express from 'express';
 const app = express();
 const PORT = 3000;
 
-app.use(express.json())
+function logAdminAccess(_req, _res, next) {
+	console.log('Кто-то заходит в админку');
+	next();
+}
+
+app.use(express.json());
+
+app.use((req, _res, next) => {
+	console.log(`${req.method} ${req.url}`);
+	next();
+});
 
 app.get('/', (_req, res) => {
 	res.send('Привет! Это мой первый сервер на Express.');
+});
+
+app.get('/admin', logAdminAccess, (_req, res) => {
+	res.send('Панель администратора');
 });
 
 // коллекция — работаем со списком целиком
@@ -29,7 +43,11 @@ app.get('/books/:id', (req, res) => {
 
 app.put('/books/:id', (req, res) => {
 	const { title, author } = req.body;
-	res.status(200).send(`Книга с id=${req.params.id} обновлена: «${title}», автор — ${author}`);
+	res
+		.status(200)
+		.send(
+			`Книга с id=${req.params.id} обновлена: «${title}», автор — ${author}`,
+		);
 });
 
 app.delete('/books/:id', (_req, res) => {
