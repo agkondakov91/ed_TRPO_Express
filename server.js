@@ -3,10 +3,35 @@ import express from 'express';
 const app = express();
 const PORT = 3000;
 
-app.use(express.json())
+function logAdminAccess(_req, _res, next) {
+	console.log('Кто-то заходит в админку');
+	next();
+}
+
+function validateBookData(req, res, next) {
+	const { title, author } = req.body;
+
+	if (!title || !author) {
+		res.status(400).send('Нужно указать title и author');
+		return;
+	}
+
+	next();
+}
+
+app.use(express.json());
+
+app.use((req, _res, next) => {
+	console.log(`${req.method} ${req.url}`);
+	next();
+});
 
 app.get('/', (_req, res) => {
 	res.send('Привет! Это мой первый сервер на Express.');
+});
+
+app.get('/admin', logAdminAccess, (_req, res) => {
+	res.send('Панель администратора');
 });
 
 // коллекция — работаем со списком целиком
@@ -17,7 +42,7 @@ app.get('/books', (req, res) => {
 		.send(`Список книг. Фильтр по статусу: ${status || 'нет фильтра'}`);
 });
 
-app.post('/books', (req, res) => {
+app.post('/books', validateBookData, (req, res) => {
 	const { title, author } = req.body;
 	res.status(201).send(`Книга создана: «${title}», автор — ${author}`);
 });
@@ -27,9 +52,13 @@ app.get('/books/:id', (req, res) => {
 	res.status(200).send(`Книга с id=${req.params.id}`);
 });
 
-app.put('/books/:id', (req, res) => {
+app.put('/books/:id', validateBookData, (req, res) => {
 	const { title, author } = req.body;
-	res.status(200).send(`Книга с id=${req.params.id} обновлена: «${title}», автор — ${author}`);
+	res
+		.status(200)
+		.send(
+			`Книга с id=${req.params.id} обновлена: «${title}», автор — ${author}`,
+		);
 });
 
 app.delete('/books/:id', (_req, res) => {
