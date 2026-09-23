@@ -8,6 +8,17 @@ function logAdminAccess(_req, _res, next) {
 	next();
 }
 
+function validateBookData(req, res, next) {
+	const { title, author } = req.body;
+
+	if (!title || !author) {
+		res.status(400).send('Нужно указать title и author');
+		return;
+	}
+
+	next();
+}
+
 app.use(express.json());
 
 app.use((req, _res, next) => {
@@ -31,7 +42,7 @@ app.get('/books', (req, res) => {
 		.send(`Список книг. Фильтр по статусу: ${status || 'нет фильтра'}`);
 });
 
-app.post('/books', (req, res) => {
+app.post('/books', validateBookData, (req, res) => {
 	const { title, author } = req.body;
 	res.status(201).send(`Книга создана: «${title}», автор — ${author}`);
 });
@@ -41,7 +52,7 @@ app.get('/books/:id', (req, res) => {
 	res.status(200).send(`Книга с id=${req.params.id}`);
 });
 
-app.put('/books/:id', (req, res) => {
+app.put('/books/:id', validateBookData, (req, res) => {
 	const { title, author } = req.body;
 	res
 		.status(200)
