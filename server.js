@@ -19,6 +19,14 @@ function validateBookData(req, res, next) {
 	next();
 }
 
+function handleErrors(err, _req, res, _next) {
+	console.error(err.stack);
+	res.status(500).json({
+		status: 'error',
+		message: 'Что-то пошло не так на сервере'
+	});
+}
+
 app.use(express.json());
 
 app.use((req, _res, next) => {
@@ -64,6 +72,17 @@ app.put('/books/:id', validateBookData, (req, res) => {
 app.delete('/books/:id', (_req, res) => {
 	res.sendStatus(204);
 });
+
+app.get('/crash-test', async (_req, _res) => {
+	throw new Error('Что-то сломалось внутри обработчика');
+});
+
+app.get('/sync-crash', (_req, _res) => {
+	const data = null;
+	console.log(data.title); // попытка обратиться к свойству null — упадёт синхронно
+});
+
+app.use(handleErrors)
 
 app.listen(PORT, () => {
 	console.log(`Сервер запущен: http://localhost:${PORT}`);
