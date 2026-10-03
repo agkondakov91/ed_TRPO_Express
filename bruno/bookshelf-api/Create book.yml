@@ -1,7 +1,7 @@
 info:
   name: Create book
   type: http
-  seq: 2
+  seq: 3
 
 http:
   method: POST
@@ -10,8 +10,8 @@ http:
     type: json
     data: |-
       {
-        "title": "Дюна",
-        "author": "Фрэнк Герберт"
+        "title": "Марсианин",
+        "author": "Энди Вейр"
       }
   auth: inherit
 

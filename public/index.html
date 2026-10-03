@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Книжная полка</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&family=Inter:wght@400;500;600&display=swap"
+    rel="stylesheet" />
+  <link rel="stylesheet" href="./style.css">
+</head>
+
+<body>
+  <main class="page">
+    <header class="page-header">
+      <h1 class="page-header__title">Книжная полка</h1>
+      <p class="page-header__count" id="book-count"></p>
+    </header>
+    <p class="page-subtitle">Что читаете на этой неделе</p>
+
+    <form class="add-form" id="book-form">
+      <div class="add-form__field">
+        <label for="title">Название</label>
+        <input type="text" id="title" name="title" autocomplete="off" required />
+      </div>
+      <div class="add-form__field">
+        <label for="author">Автор</label>
+        <input type="text" id="author" name="author" autocomplete="off" required />
+      </div>
+      <div class="add-form__field">
+        <label for="year">Год</label>
+        <input type="number" min="0" id="year" name="year" autocomplete="off" />
+      </div>
+      <button type="submit" class="button button--primary">Добавить книгу</button>
+    </form>
+
+    <ul class="book-grid" id="book-list"></ul>
+  </main>
+
+  <dialog class="edit-dialog" id="edit-dialog">
+    <form class="edit-dialog__body" id="edit-form">
+      <h2>Изменить книгу</h2>
+      <div class="field">
+        <label for="edit-title">Название</label>
+        <input type="text" id="edit-title" name="title" required />
+      </div>
+      <div class="field">
+        <label for="edit-author">Автор</label>
+        <input type="text" id="edit-author" name="author" required />
+      </div>
+      <div class="field">
+        <label for="edit-year">Год</label>
+        <input type="number" min="0" id="edit-year" name="year" />
+      </div>
+      <div class="edit-dialog__actions">
+        <button type="button" class="button button--ghost" id="edit-cancel">Отмена</button>
+        <button type="submit" class="button button--primary">Сохранить</button>
+      </div>
+    </form>
+  </dialog>
+
+  <script type="module" src="js/main.js"></script>
+</body>
+
+</html>
