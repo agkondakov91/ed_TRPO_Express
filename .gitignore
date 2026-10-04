@@ -23,3 +23,8 @@ out/
 Thumbs.db
 .idea/
 .vscode/
+.vscode/bookshelf.db
+bookshelf.db
+bookshelf.db-journal
+bookshelf.db-wal
+bookshelf.db-shm
