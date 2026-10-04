@@ -1,30 +1,24 @@
+import { DatabaseSync } from 'node:sqlite'
 import express from 'express';
 
-const books = [
-	{
-		id: 1,
-		title: 'Дюна',
-		author: 'Фрэнк Герберт',
-		year: 1965,
-		status: 'прочитал',
-	},
-	{
-		id: 2,
-		title: 'Чистый код',
-		author: 'Роберт Мартин',
-		year: 2008,
-		status: 'читаю',
-	},
-	{
-		id: 3,
-		title: 'Задача трёх тел',
-		author: 'Лю Цысинь',
-		year: 2008,
-		status: 'хочу прочитать',
-	},
-];
+const db = new DatabaseSync('bookshelf.db')
 
-let nextId = 4;
+db.exec(`
+	CREATE TABLE IF NOT EXISTS books (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    title TEXT NOT NULL,
+    author TEXT NOT NULL,
+    year INTEGER,
+    status TEXT NOT NULL DEFAULT 'хочу прочитать'
+  )`
+)
+
+const selectAllBooks = db.prepare('SELECT * FROM books')
+const selectBookById = db.prepare('SELECT * FROM books WHERE id = ?')
+const insertBook = db.prepare('INSERT INTO books (title, author, year, status) VALUES (?, ?, ?, ?)')
+const updateBookRow = db.prepare('UPDATE books SET title = ?, author = ?, year = ?, status = ? WHERE id = ?')
+const deleteBook = db.prepare('DELETE FROM books WHERE id = ?')
+
 
 const app = express();
 const PORT = 3000;
@@ -75,11 +69,11 @@ app.get('/admin', logAdminAccess, (_req, res) => {
 });
 
 app.get('/books', (_req, res) => {
-	res.json(books);
+	res.json(selectAllBooks.all())
 });
 
 app.get('/books/:id', (req, res) => {
-	const book = books.find((b) => b.id === Number(req.params.id));
+	const book = selectBookById.get(Number(req.params.id))
 
 	if (!book) {
 		res.status(404).send('Книга не найдена');
@@ -92,46 +86,37 @@ app.get('/books/:id', (req, res) => {
 app.post('/books', validateBookData, (req, res) => {
 	const { title, author, year, status } = req.body;
 
-	const newBook = {
-		id: nextId++,
-		title,
-		author,
-		year: year ?? null,
-		status: status || 'хочу прочитать',
-	};
+	const result = insertBook.run(title, author, year ?? null, status || 'хочу прочитать')
 
-	books.push(newBook);
-	res.status(201).json(newBook);
+	res.status(201).json(selectBookById.get(result.lastInsertRowid))
 });
 
 app.put('/books/:id', validateBookData, (req, res) => {
-	const book = books.find((book) => book.id === Number(req.params.id));
+	const id = Number(req.params.id)
+	const existing = selectBookById.get(id)
 
-	if (!book) {
+	if (!existing) {
 		res.status(404).send('Книга не найдена');
 		return;
 	}
 
 	const { title, author, year, status } = req.body;
+	updateBookRow.run(title, author, year ?? null, status || existing.status, id)
 
-	book.title = title;
-	book.author = author;
-	book.year = year ?? null;
-	book.status = status || book.status;
-
-	res.json(book);
+	res.json(selectBookById.get(id))
 });
 
 app.delete('/books/:id', (req, res) => {
-	const index = books.findIndex((book) => book.id === Number(req.params.id));
+	const id = Number(req.params.id)
+	const existing = selectBookById.get(id)
 
-	if (index === -1) {
+	if (!existing) {
 		res.status(404).send('Книга не найдена');
 		return;
 	}
 
-	books.splice(index, 1);
-	res.status(204).end();
+	deleteBook.run(id)
+	res.status(204).end()
 });
 
 app.get('/crash-test', async (_req, _res) => {
