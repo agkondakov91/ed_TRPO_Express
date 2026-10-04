@@ -86,7 +86,7 @@ app.get('/books/:id', (req, res) => {
 app.post('/books', validateBookData, (req, res) => {
 	const { title, author, year, status } = req.body;
 
-	const result = insertBook.run(title, author, year ?? null, status || 'хочу прочитать')
+	const result = insertBook.run(title, author, year ?? 0, status || 'хочу прочитать')
 
 	res.status(201).json(selectBookById.get(result.lastInsertRowid))
 });
@@ -101,7 +101,7 @@ app.put('/books/:id', validateBookData, (req, res) => {
 	}
 
 	const { title, author, year, status } = req.body;
-	updateBookRow.run(title, author, year ?? null, status || existing.status, id)
+	updateBookRow.run(title, author, year ?? 0, status || existing.status, id)
 
 	res.json(selectBookById.get(id))
 });
@@ -125,7 +125,7 @@ app.get('/crash-test', async (_req, _res) => {
 
 app.get('/sync-crash', (_req, _res) => {
 	const data = null;
-	console.log(data.title); // попытка обратиться к свойству null — упадёт синхронно
+	console.log(data.title);
 });
 
 app.use(handleErrors);
