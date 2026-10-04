@@ -27,7 +27,7 @@ export function renderBookCount(books, countElement) {
 
   const reading = books.filter((book) => book.status === 'читаю').length;
   countElement.textContent =
-    reading > 0 ? `${books.length} книг, читаю ${reading}` : `${books.length} книг`;
+    reading > 0 ? `книг: ${books.length}, читаю: ${reading}` : `книг: ${books.length}`;
 }
 
 function createBookCard(book, handlers, isNew) {

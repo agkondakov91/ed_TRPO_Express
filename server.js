@@ -74,9 +74,19 @@ app.get('/admin', logAdminAccess, (_req, res) => {
 	res.send('Панель администратора');
 });
 
-// коллекция — работаем со списком целиком
 app.get('/books', (_req, res) => {
 	res.json(books);
+});
+
+app.get('/books/:id', (req, res) => {
+	const book = books.find((b) => b.id === Number(req.params.id));
+
+	if (!book) {
+		res.status(404).send('Книга не найдена');
+		return;
+	}
+
+	res.json(book);
 });
 
 app.post('/books', validateBookData, (req, res) => {
@@ -92,18 +102,6 @@ app.post('/books', validateBookData, (req, res) => {
 
 	books.push(newBook);
 	res.status(201).json(newBook);
-});
-
-// один элемент — работаем с конкретной книгой
-app.get('/books/:id', (req, res) => {
-	const book = books.find((b) => b.id === Number(req.params.id));
-
-	if (!book) {
-		res.status(404).send('Книга не найдена');
-		return;
-	}
-
-	res.json(book);
 });
 
 app.put('/books/:id', validateBookData, (req, res) => {
