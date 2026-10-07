@@ -1,49 +1,49 @@
 .edit-dialog {
-  border: none;
-  border-radius: var(--radius-md);
-  padding: 0;
-  background: var(--color-surface);
-  max-width: 400px;
-  width: calc(100% - 48px);
+	border: none;
+	border-radius: var(--radius-md);
+	padding: 0;
+	background: var(--color-surface);
+	max-width: 400px;
+	width: calc(100% - 48px);
 }
 
 .edit-dialog::backdrop {
-  background: color-mix(in srgb, var(--color-ink) 40%, transparent);
-  backdrop-filter: blur(2px);
+	background: color-mix(in srgb, var(--color-ink) 40%, transparent);
+	backdrop-filter: blur(2px);
 }
 
 .edit-dialog__body {
-  padding: var(--space-5);
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-4);
+	padding: var(--space-5);
+	display: flex;
+	flex-direction: column;
+	gap: var(--space-4);
 }
 
 .edit-dialog h2 {
-  font-size: 20px;
+	font-size: 20px;
 }
 
 .field {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-1);
+	display: flex;
+	flex-direction: column;
+	gap: var(--space-1);
 }
 
 .field label {
-  font-size: 13px;
-  color: var(--color-ink-muted);
+	font-size: 13px;
+	color: var(--color-ink-muted);
 }
 
 .field input {
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-sm);
-  padding: var(--space-2);
-  font-size: 15px;
+	border: 1px solid var(--color-border);
+	border-radius: var(--radius-sm);
+	padding: var(--space-2);
+	font-size: 15px;
 }
 
 .edit-dialog__actions {
-  display: flex;
-  justify-content: flex-end;
-  gap: var(--space-2);
-  margin-top: var(--space-2);
+	display: flex;
+	justify-content: flex-end;
+	gap: var(--space-2);
+	margin-top: var(--space-2);
 }

@@ -1,7 +1,7 @@
-import { DatabaseSync } from 'node:sqlite'
+import { DatabaseSync } from 'node:sqlite';
 import express from 'express';
 
-const db = new DatabaseSync('bookshelf.db')
+const db = new DatabaseSync('bookshelf.db');
 
 db.exec(`
 	CREATE TABLE IF NOT EXISTS books (
@@ -10,15 +10,17 @@ db.exec(`
     author TEXT NOT NULL,
     year INTEGER,
     status TEXT NOT NULL DEFAULT 'хочу прочитать'
-  )`
-)
+  )`);
 
-const selectAllBooks = db.prepare('SELECT * FROM books')
-const selectBookById = db.prepare('SELECT * FROM books WHERE id = ?')
-const insertBook = db.prepare('INSERT INTO books (title, author, year, status) VALUES (?, ?, ?, ?)')
-const updateBookRow = db.prepare('UPDATE books SET title = ?, author = ?, year = ?, status = ? WHERE id = ?')
-const deleteBook = db.prepare('DELETE FROM books WHERE id = ?')
-
+const selectAllBooks = db.prepare('SELECT * FROM books');
+const selectBookById = db.prepare('SELECT * FROM books WHERE id = ?');
+const insertBook = db.prepare(
+	'INSERT INTO books (title, author, year, status) VALUES (?, ?, ?, ?)',
+);
+const updateBookRow = db.prepare(
+	'UPDATE books SET title = ?, author = ?, year = ?, status = ? WHERE id = ?',
+);
+const deleteBook = db.prepare('DELETE FROM books WHERE id = ?');
 
 const app = express();
 const PORT = 3000;
@@ -69,11 +71,11 @@ app.get('/admin', logAdminAccess, (_req, res) => {
 });
 
 app.get('/books', (_req, res) => {
-	res.json(selectAllBooks.all())
+	res.json(selectAllBooks.all());
 });
 
 app.get('/books/:id', (req, res) => {
-	const book = selectBookById.get(Number(req.params.id))
+	const book = selectBookById.get(Number(req.params.id));
 
 	if (!book) {
 		res.status(404).send('Книга не найдена');
@@ -86,14 +88,19 @@ app.get('/books/:id', (req, res) => {
 app.post('/books', validateBookData, (req, res) => {
 	const { title, author, year, status } = req.body;
 
-	const result = insertBook.run(title, author, year ?? 0, status || 'хочу прочитать')
+	const result = insertBook.run(
+		title,
+		author,
+		year ?? 0,
+		status || 'хочу прочитать',
+	);
 
-	res.status(201).json(selectBookById.get(result.lastInsertRowid))
+	res.status(201).json(selectBookById.get(result.lastInsertRowid));
 });
 
 app.put('/books/:id', validateBookData, (req, res) => {
-	const id = Number(req.params.id)
-	const existing = selectBookById.get(id)
+	const id = Number(req.params.id);
+	const existing = selectBookById.get(id);
 
 	if (!existing) {
 		res.status(404).send('Книга не найдена');
@@ -101,22 +108,22 @@ app.put('/books/:id', validateBookData, (req, res) => {
 	}
 
 	const { title, author, year, status } = req.body;
-	updateBookRow.run(title, author, year ?? 0, status || existing.status, id)
+	updateBookRow.run(title, author, year ?? 0, status || existing.status, id);
 
-	res.json(selectBookById.get(id))
+	res.json(selectBookById.get(id));
 });
 
 app.delete('/books/:id', (req, res) => {
-	const id = Number(req.params.id)
-	const existing = selectBookById.get(id)
+	const id = Number(req.params.id);
+	const existing = selectBookById.get(id);
 
 	if (!existing) {
 		res.status(404).send('Книга не найдена');
 		return;
 	}
 
-	deleteBook.run(id)
-	res.status(204).end()
+	deleteBook.run(id);
+	res.status(204).end();
 });
 
 app.get('/crash-test', async (_req, _res) => {
