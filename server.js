@@ -1,7 +1,9 @@
 import { DatabaseSync } from 'node:sqlite';
 import express from 'express';
 
-const db = new DatabaseSync('bookshelf.db');
+const PORT = process.env.PORT ?? 3000;
+const DB_PATH = process.env.DB_PATH ?? 'bookshelf.db';
+const db = new DatabaseSync(DB_PATH);
 
 db.exec(`
 	CREATE TABLE IF NOT EXISTS books (
@@ -23,7 +25,6 @@ const updateBookRow = db.prepare(
 const deleteBook = db.prepare('DELETE FROM books WHERE id = ?');
 
 const app = express();
-const PORT = 3000;
 
 function logAdminAccess(_req, _res, next) {
 	console.log('Кто-то заходит в админку');
@@ -135,8 +136,12 @@ app.get('/sync-crash', (_req, _res) => {
 	console.log(data.title);
 });
 
+app.get('/health', (_req, res) => {
+	res.json({ status: 'ok' });
+});
+
 app.use(handleErrors);
 
 app.listen(PORT, () => {
-	console.log(`Сервер запущен: http://localhost:${PORT}`);
+	console.log(`Сервер запущен порту ${PORT}`);
 });
