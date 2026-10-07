@@ -142,6 +142,11 @@ app.get('/health', (_req, res) => {
 
 app.use(handleErrors);
 
-app.listen(PORT, () => {
-	console.log(`Сервер запущен порту ${PORT}`);
+app.listen(PORT, (error) => {
+	if (error) {
+		console.error(`Не удалось занять порт ${PORT}: ${error.message}`);
+		process.exit(1);
+	}
+
+	console.log(`Сервер запущен на порту ${PORT}`);
 });
